@@ -2,7 +2,6 @@
 
 /*
     csvの読み込み
-    ・１行目を飛ばす。
     ・対象パスにcsvが存在するか確認
 
 */
@@ -11,15 +10,19 @@ if (($handle = fopen("data/testdata.csv", "r")) !== FALSE)
 {
     while (($data = fgetcsv($handle, 1000, ",")) !== FALSE)
     {
-        $num = count($data);
-        echo "$row 行目<br>";
-        $row++;
-        
-        for ($c = 0; $c < $num; $c++)
+        //１行目をスキップ。
+        if ($row !== 1)
         {
-            echo $data[$c];
+            echo "$row 行目<br>";
+            
+            $num = count($data);
+            for ($c = 0; $c < $num; $c++)
+            {
+                echo $data[$c];
+            }
+            echo "<br>";
         }
-        echo "<br>";
+        $row++;
     }
     fclose($handle);
 }
