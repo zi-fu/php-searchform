@@ -5,15 +5,15 @@
     ・対象パスにcsvが存在するか確認
 */
 
-// csvファイルかチェック
-$fileName = 'data/testdata.csv';
-if (pathinfo($fileName, PATHINFO_EXTENSION) !== 'csv')
-{
-    echo 'CSVファイルではありません。ファイル形式を確認してください。';
-}
-
 try 
 {
+    // csvファイルかチェック
+    $fileName = 'data/testdata.csv';
+    if (pathinfo($fileName, PATHINFO_EXTENSION) !== 'csv')
+    {
+        echo 'CSVファイルではありません。ファイル形式を確認してください。';
+    }
+
     $csvData = new SplFileObject($fileName);
     $csvData->setFlags(SplFileObject::READ_CSV);
 
@@ -30,11 +30,14 @@ try
             var_dump($line);
         }
     }
-} 
-catch (Exception $e) 
+}
+catch (Throwable $e) 
 {
+
+    echo "Captured Throwable: " . $e->getMessage() . PHP_EOL;
     //エラー処理
-    echo  $e->getMessage();
+    // echo  $e->getMessage();
+    //エラーログ
 }
 
 // csvデータのバリデーション
