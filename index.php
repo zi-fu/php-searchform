@@ -2,19 +2,32 @@
 
 /*
     csvの読み込み
-    ・対象パスにcsvが存在するか確認
 */
+ini_set("date.timezone", "Asia/Tokyo");
+
+//エラーログの設定
+ini_set("log_errors","on");
+ini_set("error_log","./var/debug.log");
+
+//読みこむCSVのパス指定
+$filePath = 'data/testdata.csv';
+
 
 try 
 {
-    // csvファイルかチェック
-    $fileName = 'data/testdata.csv';
-    if (pathinfo($fileName, PATHINFO_EXTENSION) !== 'csv')
+    // ファイルが存在するか調べる
+    if (file_exists($filePath))
+    {
+        echo '対象ファイルが存在しません。';
+    }
+
+    // csvファイルか判定
+    if (pathinfo($filePath, PATHINFO_EXTENSION) !== 'csv')
     {
         echo 'CSVファイルではありません。ファイル形式を確認してください。';
     }
 
-    $csvData = new SplFileObject($fileName);
+    $csvData = new SplFileObject($filePath);
     $csvData->setFlags(SplFileObject::READ_CSV);
 
     //CSVファイル読み込みフラグ設定
@@ -33,11 +46,10 @@ try
 }
 catch (Throwable $e) 
 {
-
-    echo "Captured Throwable: " . $e->getMessage() . PHP_EOL;
-    //エラー処理
-    // echo  $e->getMessage();
+    //エラーメッセージ
+    echo  $e->getMessage();
     //エラーログ
+    error_log("エラー：ログファイルテスト1\n", 0);
 }
 
 // csvデータのバリデーション
