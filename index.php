@@ -10,13 +10,23 @@ ini_set("log_errors","on");
 ini_set("error_log","./var/debug.log");
 
 //読みこむCSVのパス指定
-$filePath = 'data/testdata.csv';
-
+$filePath = 'data/';
 
 try 
 {
+    // post以外のアクセスをリダイレクト
+    if (empty($_POST))
+    {
+        header('Location: /index.html');
+        exit;
+    }
+    else
+    {
+        $filePath = $filePath . $_POST['csvfile'];
+    }
+
     // ファイルが存在するか調べる
-    if (file_exists($filePath))
+    if (!file_exists($filePath))
     {
         echo '対象ファイルが存在しません。';
     }
@@ -41,6 +51,8 @@ try
         {
             $records[] = $line; 
             var_dump($line);
+            // DBへの登録
+            // ファイルメモリへの配慮
         }
     }
 }
@@ -49,7 +61,9 @@ catch (Throwable $e)
     //エラーメッセージ
     echo  $e->getMessage();
     //エラーログ
-    error_log("エラー：ログファイルテスト1\n", 0);
+    error_log($e->getMessage(), 0);
 }
 
 // csvデータのバリデーション
+
+
