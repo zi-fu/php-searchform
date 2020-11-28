@@ -14,22 +14,22 @@ ini_set("log_errors","on");
 ini_set("error_log","./var/debug.log");
 
 //読みこむCSVのパス指定
-$filePath = 'data/';
-// $filePath = 'data/testdata.csv';
+// $filePath = 'data/';
+$filePath = 'data/testdata.csv';
 
 try 
 {
 
-    // post以外のアクセスをリダイレクト
-    if (empty($_POST))
-    {
-        header('Location: /index.html');
-        exit;
-    }
-    else
-    {
-        $filePath = $filePath . $_POST['csvfile'];
-    }
+    // // post以外のアクセスをリダイレクト
+    // if (empty($_POST))
+    // {
+    //     header('Location: /index.html');
+    //     exit;
+    // }
+    // else
+    // {
+    //     $filePath = $filePath . $_POST['csvfile'];
+    // }
 
     // ファイルが存在するか調べる
     if (!file_exists($filePath))
@@ -53,7 +53,10 @@ try
         \SplFileObject::DROP_NEW_LINE     // 行末の改行を読み飛ばす
     );
 
+    // CSVの行のカウント
     $i = 0;
+    // バリデーションルールの読み込み
+    $rules = csvRules();
 
     foreach ($csvData as $line) 
     {
@@ -67,8 +70,9 @@ try
             // csvのバリデーション
             if ($i == 2 )
             {
-                var_dump($line);
-                $error[] = csvValidation($line);
+                // var_dump($line);
+                $error[] = csvValidation($line, $i, $rules);
+                // var_dump($error);
             }
             // DBへの登録
             // ファイルメモリへの配慮
@@ -86,9 +90,14 @@ catch (Throwable $e)
 
 // csvデータのバリデーション
 //   返り値は、対象項目とエラー内容
-function csvValidation($line)
+function csvValidation($line, $i, $rules)
 {
-
+    var_dump($rules);
+    foreach ($line as $key => $value) 
+    {
+        // echo "{$key} => {$value} ";
+        // echo '<br>';
+    }
     // 必須項目
     // 全角
     // 半角
@@ -97,3 +106,23 @@ function csvValidation($line)
 
 }
 
+
+function csvRules()
+{
+    return [
+        'csv_file' => [
+            'name' => ['required|maxlength[30]|fullwidth'],
+            'kana' => ['required|maxlength[30]|kana'],
+            'mail' => ['required|maxlength[60]|mail'],
+            'sex' => ['required|maxlength[5]'],
+            'age' => ['required|maxlength[3]'],
+            'birthday' => ['required|maxlength[10]'],
+            'married' => ['required|maxlength[2]'],
+            'bloodtype' => ['required|maxlength[3]'],
+            'place' => ['required|maxlength[10]'],
+            'tel' => ['required|maxlength[13]'],
+            'telusecompany' => ['required|maxlength[20]'],
+            'etc' => ['required|maxlength[20]'],
+        ],
+    ];
+}
